@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <chrono>
+
 using namespace std;
 #define MAXn 4
 #define MAXvalue 10
@@ -59,7 +61,7 @@ int main(){
     int i,n;
 
     for(i=1;i<=t ;i++){
-        cout<<"-------------------------------------- TEST CASE "<<i<<" --------------------------------------"<<endl;
+        cout<<"\n-------------------------------------- TEST CASE "<<i<<" --------------------------------------"<<endl;
         n = (rand()%MAXn )+1;
         cout << "n = "<<n<<endl;
         a = generateMatrix(n);
@@ -70,8 +72,12 @@ int main(){
         displayMatrix(b);
 
         cout<<"Matrix C = A*B using itereative Multiplication"<<endl;
-        displayMatrix(iterativeMultiplication(a,b));
-
+        auto start = chrono::steady_clock::now();
+        c = iterativeMultiplication(a,b);
+        auto end = chrono::steady_clock::now();
+        auto elapsed_time = end-start;
+        displayMatrix(c);
+        cout<<"Time Elapsed = " << chrono::duration<double, micro>(elapsed_time).count() << " µs" <<endl;
     }
     return 0;
 }
