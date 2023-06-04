@@ -3,7 +3,7 @@
 #include <chrono>
 
 using namespace std;
-#define MAXn 4
+#define MAXn 80
 #define MAXvalue 10
 
 vector<vector<int>> generateMatrix(int n){
@@ -62,22 +62,23 @@ int main(){
 
     for(i=1;i<=t ;i++){
         cout<<"\n-------------------------------------- TEST CASE "<<i<<" --------------------------------------"<<endl;
-        n = (rand()%MAXn )+1;
+        // n = (rand()%MAXn )+1;
+        n = 400;
         cout << "n = "<<n<<endl;
         a = generateMatrix(n);
         b = generateMatrix(n);
         cout<<"Matrix A"<<endl;
-        displayMatrix(a);
+        // displayMatrix(a);
         cout<<"Matrix B"<<endl;
-        displayMatrix(b);
+        // displayMatrix(b);
 
         cout<<"Matrix C = A*B using itereative Multiplication"<<endl;
         auto start = chrono::steady_clock::now();
         c = iterativeMultiplication(a,b);
         auto end = chrono::steady_clock::now();
         auto elapsed_time = end-start;
-        displayMatrix(c);
-        cout<<"Time Elapsed = " << chrono::duration<double, micro>(elapsed_time).count() << " µs" <<endl;
+        // displayMatrix(c);
+        cout<<"Time Elapsed = " << chrono::duration<double, milli>(elapsed_time).count() << " ms" <<endl;
     }
     return 0;
 }
