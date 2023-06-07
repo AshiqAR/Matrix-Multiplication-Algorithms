@@ -19,7 +19,7 @@ vector<vector<int>> generateMatrix(int n){
 vector<vector<int>> MSum(vector<vector<int>> a,vector<vector<int>> b){
     vector<vector<int>> c(a.size());
     for(int i=0;i<a.size();i++){
-        for(int j=0;j<a[0].size();j++){
+        for(int j=0;j<a[i].size();j++){
             c[i].push_back(a[i][j]+b[i][j]);
         }
     }
@@ -36,29 +36,35 @@ void displayMatrix(vector<vector<int>> a){
     cout <<endl;
 }
 
-vector<vector<int>> MMult(vector<vector<int>> &a,vector<vector<int>> &b){
+vector<vector<int>> MMult(vector<vector<int>> a,vector<vector<int>> b){
 
     int a_row_size = a.size();
     int a_col_size = a[0].size();
     int b_row_size = b.size();
     int b_col_size = b[0].size();
     int i,j,k;
+    displayMatrix(a);
+    displayMatrix(b);
     if(a_col_size != b_row_size){
         cout << "Not compatible for Matrix Multiplication"<<endl;
         return a;
     }
-    vector<vector<int>> c(a_row_size,vector<int>(b_col_size,0));
-    if(a_row_size <= 2 || b_row_size <= 2){
+
+    if(a_row_size <= 2 || a_col_size <= 2 || b_col_size<=2){
+        vector<vector<int>> v(a_row_size);
+        int sum;
         for(i=0;i<a_row_size;i++){
             for(j=0;j<b_col_size;j++){
+                sum = 0;
                 for(k=0;k<a_col_size;k++)
-                    c[i][j] += a[i][k]*b[k][j];
+                    sum += a[i][k]*b[k][j];
+                v[i].push_back(sum);
             }
         }
-        return c;
+        return v;
     }
 
-    int mar = (a_row_size/2); 
+    int mar = (a_row_size/2);
     int mac = (a_col_size/2);
     int mbr = (b_row_size/2);
     int mbc = (b_col_size/2);
@@ -79,6 +85,7 @@ vector<vector<int>> MMult(vector<vector<int>> &a,vector<vector<int>> &b){
         for(j=mac;j<a_col_size;j++)
             a2[k].push_back(a[i][j]);
     }
+
     for(i=mar,k=0;i<a_row_size;i++,k++){
         for(j=0;j<mac;j++)
             a3[k].push_back(a[i][j]);
@@ -104,20 +111,22 @@ vector<vector<int>> MMult(vector<vector<int>> &a,vector<vector<int>> &b){
     vector<vector<int>> x3 = MSum(MMult(a3,b1),MMult(a4,b3));
     vector<vector<int>> x4 = MSum(MMult(a3,b2),MMult(a4,b4));
 
+    vector<vector<int>> c(a_row_size,vector<int>(b_col_size,0));
+
     for(i=0;i<mar;i++){
-        for(j=0;j<mac;j++){
+        for(j=0;j<mbc;j++){
             c[i][j] = x1[i][j];
         }
-        for(j=mac;j<b_col_size;j++){
-            c[i][j] = x2[i][j-mac];
+        for(j=mbc;j<b_col_size;j++){
+            c[i][j] = x2[i][j-mbc];
         }
     }
     for(i=mar;i<a_row_size;i++){
-        for(j=0;j<mac;j++){
+        for(j=0;j<mbc;j++){
             c[i][j] = x3[i-mar][j];
         }
-        for(j=mac;j<b_col_size;j++){
-            c[i][j] = x4[i-mar][j-mac];
+        for(j=mbc;j<b_col_size;j++){
+            c[i][j] = x4[i-mar][j-mbc];
         }
     }
     return c;
@@ -127,7 +136,6 @@ vector<vector<int>> MMult(vector<vector<int>> &a,vector<vector<int>> &b){
 int main(){
     vector<vector<int>> a;
     vector<vector<int>> b;
-    vector<vector<int>> c;
 
     cout<<"Enter the number of test cases: ";
     int t; cin>>t;
@@ -135,8 +143,7 @@ int main(){
 
     for(i=1;i<=t ;i++){
         cout<<"\n-------------------------------------- TEST CASE "<<i<<" --------------------------------------"<<endl;
-        // n = (rand()%MAXn)+1;
-        n = 100;
+        n = (rand()%MAXn)+1;
         cout << "n = "<<n<<endl;
         a = generateMatrix(n);
         b = generateMatrix(n);
@@ -147,10 +154,10 @@ int main(){
 
         auto start = chrono::steady_clock::now();
         cout<<"Matrix C = A*B using Divide and Conquer Multiplication"<<endl;
-        c = MMult(a,b);
+        vector<vector<int>> c = MMult(a,b);
         auto end = chrono::steady_clock::now();
         auto elapsed_time = end-start;
-        // displayMatrix(c);
+        displayMatrix(c);
         cout<<"Time Elapsed = " << chrono::duration<double, milli>(elapsed_time).count() << " ms" <<endl;
 
     }
